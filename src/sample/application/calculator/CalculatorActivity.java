@@ -1,6 +1,7 @@
 package sample.application.calculator;
 
 //import sample.application.memopad.R;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import android.os.Bundle;
@@ -22,6 +23,7 @@ public class CalculatorActivity extends Activity {
 	Double d2        = 0.0;
 //	String taihi     = null;
 	String enzan     = " ";
+	String strTemp   = "";
 /*	ArrayList arrayList1 = new ArrayList();
 	ArrayList arrayList2 = new ArrayList();
 	ArrayList arrayList3 = new ArrayList(); */
@@ -44,6 +46,21 @@ public class CalculatorActivity extends Activity {
     }
     
     public void numKeyOnClick(View v){
+    	String strInKey = (String) ((Button)v).getText();
+    	
+    	if(strInKey.equals(".")){
+    		if(this.strTemp.length() == 0){
+    			this.strTemp = "0.";
+    		}else{
+    			if(this.strTemp.indexOf(".") == -1){
+    				this.strTemp = this.strTemp + ".";
+    			}else{
+    				this.strTemp = this.strTemp + strInKey;
+    			}
+    		}
+    	}
+    	this.showNumber(this.strTemp);
+/*    	
     	Button button = (Button)v;
      	Log.d("[buttonのtext]",button.getText().toString());
      	TextView tv = (TextView) this.findViewById(R.id.displayPanel);
@@ -59,7 +76,30 @@ public class CalculatorActivity extends Activity {
      	}else{
      		tv.setText(strtv + str);
      	}
+*/
     }
+    
+    private void showNumber(String strNum){
+    	DecimalFormat form = new DecimalFormat("#,##0");
+    	String strDecimal = "";
+    	String strInt = "";
+    	String fText = "";
+    	
+    	if(strNum.length() > 0){
+    		int decimalPoint = strNum.indexOf(".");
+    		if(decimalPoint > -1){
+    			strDecimal = strNum.substring(decimalPoint);
+    			strInt = strNum.substring(0,decimalPoint);
+    		}else{
+    			strInt = strNum;
+    		}
+    		fText = form.format(Double.parseDouble(strInt)) + strDecimal;
+    	}else{
+    		fText = "0";
+    	}
+    	((TextView)findViewById(R.id.displayPanel)).setText(fText);
+    }
+    
     public void addKeyOnClick(View v){
      	TextView tv = (TextView) this.findViewById(R.id.displayPanel);
 		d2 = Double.parseDouble(tv.getText().toString());
@@ -74,13 +114,13 @@ public class CalculatorActivity extends Activity {
     }
     public void subKeyOnClick(View v){
      	TextView tv = (TextView) this.findViewById(R.id.displayPanel);
-		d2 = Double.parseDouble(tv.getText().toString());
-     	d1 = calculato(enzan,d1,d2);
-    	enzan = "-";
+		this.d2 = Double.parseDouble(tv.getText().toString());
+		this.d1 = calculato(this.enzan,this.d1,this.d2);
+		this.enzan = "-";
     	tv.setText("0");
-    	dbk[count] = d2;
-    	ebk[count] = enzan;
-    	count++;
+    	this.dbk[count] = this.d2;
+    	this.ebk[count] = this.enzan;
+    	this.count++;
     }
     public void mulKeyOnClick(View v){
      	TextView tv = (TextView) this.findViewById(R.id.displayPanel);
