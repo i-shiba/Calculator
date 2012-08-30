@@ -1,6 +1,7 @@
 package sample.application.calculator;
 
 //import sample.application.memopad.R;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.text.Selection;
 
 public class CalculatorActivity extends Activity {
@@ -24,6 +26,8 @@ public class CalculatorActivity extends Activity {
 //	String taihi     = null;
 	String enzan     = " ";
 	String strTemp   = "";
+	String strResult = "0";
+	Integer operator = 0;
 /*	ArrayList arrayList1 = new ArrayList();
 	ArrayList arrayList2 = new ArrayList();
 	ArrayList arrayList3 = new ArrayList(); */
@@ -98,6 +102,57 @@ public class CalculatorActivity extends Activity {
     		fText = "0";
     	}
     	((TextView)findViewById(R.id.displayPanel)).setText(fText);
+    }
+    
+    public void operatorKeyOnClick(View v){
+    	if(this.operator != 0){
+    		if(this.strTemp.length() > 0){
+    			this.strResult = this.doCalc();
+    			this.showNumber(this.strResult);
+    		}
+    	}else{
+    		if(this.strTemp.length() > 0){
+    			this.strResult = this.strTemp;
+    		}
+    	}
+    	this.strTemp = "";
+    	if(v.getId() == R.id.keypadEq){
+    		this.operator = 0;
+    	}else{
+    		this.operator = v.getId();
+    	}
+    }
+    
+    private String doCalc(){
+    	BigDecimal bd1 = new BigDecimal(strResult);
+    	BigDecimal bd2 = new BigDecimal(strTemp);
+    	BigDecimal result = BigDecimal.ZERO;
+    	
+    	switch(this.operator){
+    	case R.id.keypadAdd:
+    		result = bd1.add(bd2);
+    		break;
+    	case R.id.keypadSub:
+    		result = bd1.subtract(bd2);
+    		break;
+    	case R.id.keypadMulti:
+    		result = bd1.multiply(bd2);
+    		break;
+    	case R.id.keypadDiv:
+    		if(!bd2.equals(BigDecimal.ZERO)){
+    			result = bd1.divide(bd2, 12, 3);
+    		}else{
+    			Toast toast = Toast.makeText(this, R.string.toast_div_by_zero, 1000);
+    			toast.show();
+    		}
+    		break;
+    	}
+    	
+    	if(result.toString().indexOf(".") >= 0){
+    		return result.toString().replaceAll("¥¥.0+$|0+$", "");
+    	}else{
+    		return result.toString();
+    	}
     }
     
     public void addKeyOnClick(View v){
