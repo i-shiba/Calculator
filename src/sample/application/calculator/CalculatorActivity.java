@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.text.ClipboardManager;
 import android.text.Selection;
 
 public class CalculatorActivity extends Activity {
@@ -23,7 +24,15 @@ public class CalculatorActivity extends Activity {
 	String strTemp   = "";
 	String strResult = "0";
 	Integer operator = 0;
+/*	
+	private static Map<Integer, FunctionLogic> funcMap;
 	
+	static{
+		CalculatorActivit.funcMap = new HashMap<Integer, FunctionLogic>();
+		CalculatorActivit.funcMap.
+		
+	}
+	*/
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +121,31 @@ public class CalculatorActivity extends Activity {
     	}else{
     		this.operator = v.getId();
     	}
+    }
+    
+    public void functionKeyOnClick(View v){
+    	switch(v.getId()){
+    	case R.id.keypadAC:
+    		this.strTemp = "";
+    		this.strResult = "0";
+    		this.operator = 0;
+    		break;
+    	case R.id.keypadC:
+    		this.strTemp = "";
+    		break;
+    	case R.id.keypadBS:
+    		if(this.strTemp.length() == 0){
+    			return;
+    		}else{
+    			this.strTemp = this.strTemp.substring(0,this.strTemp.length()-1);
+    		}
+    		break;
+    	case R.id.keypadCopy:
+    		ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+    		cm.setText(((TextView)findViewById(R.id.displayPanel)).getText());
+    	return;
+    	}
+    	this.showNumber(this.strTemp);
     }
     
     private String doCalc(){
